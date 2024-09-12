@@ -1,0 +1,42 @@
+<% results.forEach(pokemon => { %>
+<div>
+  <p>Nome: <%= pokemon.name %></p>
+  <img
+    src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/<%= pokemon.url.split('/')[6] %>.png"
+    alt="<%= pokemon.name %>"
+  />
+
+  <button onclick="fetchPokemonDetails('<%= pokemon.url %>')">
+    Escolher Pokémon
+  </button>
+
+  <div id="pokemon-details-<%= pokemon.url.split('/')[6] %>"></div>
+</div>
+<% }) %>
+
+<script>
+  async function fetchPokemonDetails(pokemonUrl) {
+    try {
+      const response = await fetch(pokemonUrl);
+      const data = await response.json();
+
+      const pokemonId = pokemonUrl.split("/")[6];
+      const detailsDiv = document.getElementById(
+        `pokemon-details-${pokemonId}`
+      );
+
+      const stats = data.stats
+        .map((stat) => {
+          return `<li>${stat.stat.name}: ${stat.base_stat}</li>`;
+        })
+        .join("");
+
+      detailsDiv.innerHTML = `
+        <h4>Status do Pokémon Escolhido:</h4>
+        <ul>${stats}</ul>
+      `;
+    } catch (error) {
+      console.error("Erro ao buscar detalhes do Pokémon", error);
+    }
+  }
+</script>

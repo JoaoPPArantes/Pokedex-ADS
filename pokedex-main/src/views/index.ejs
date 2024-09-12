@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PokeDex Unicesumar</title>
+
+    <link rel="stylesheet" href="/src/views/style.css" />
+  </head>
+  <body
+    style="
+      font-family: Arial, sans-serif;
+      background-color: #e00000; /* Vermelho predominante */
+      color: #ffffff; /* Texto branco para contraste */
+      padding: 20px;
+      margin: 0;
+    "
+  >
+    <h1
+      style="
+        color: #ffffff;
+        text-align: center;
+        font-size: 36px;
+        margin-bottom: 30px;
+      "
+    >
+      PokeDex Unicesumar
+    </h1>
+    <% results.forEach(pokemon => { %>
+    <div
+      class="pokemon-card"
+      style="
+        border: 2px solid #000000; /* Borda preta */
+        background-color: #ffcc00; /* Fundo amarelo para contrastar com o vermelho */
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #000000;
+      "
+    >
+      <div>
+        <p>Nome: <%= pokemon.name %></p>
+        <img
+          style="
+            border: 2px solid #000000; /* Borda preta ao redor das imagens */
+            border-radius: 50%; /* Deixa as imagens circulares */
+            padding: 5px;
+            background-color: #ffffff;
+          "
+          src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/<%= pokemon.url.split('/')[6] %>.png"
+          alt="<%= pokemon.name %>"
+        />
+
+        <div id="pokemon-details-<%= pokemon.url.split('/')[6] %>"></div>
+      </div>
+      <button
+        style="
+          background-color: #00cc00; /* Verde claro */
+          color: #ffffff;
+          border: 2px solid #000000; /* Borda preta para contraste */
+          padding: 10px 20px;
+          border-radius: 5px;
+          cursor: pointer;
+          background-color: #009900;
+        "
+        onclick="fetchPokemonDetails('<%= pokemon.url %>')"
+      >
+        Escolher Pokémon
+      </button>
+    </div>
+    <% }) %>
+
+    <script>
+      async function fetchPokemonDetails(pokemonUrl) {
+        try {
+          const response = await fetch(pokemonUrl);
+          const data = await response.json();
+
+          const pokemonId = pokemonUrl.split("/")[6];
+          const detailsDiv = document.getElementById(
+            `pokemon-details-${pokemonId}`
+          );
+
+          const stats = data.stats
+            .map((stat) => {
+              return `<li>${stat.stat.name}: ${stat.base_stat}</li>`;
+            })
+            .join("");
+
+          detailsDiv.innerHTML = `
+            <h4>Status do Pokémon Escolhido:</h4>
+            <ul>${stats}</ul>
+          `;
+        } catch (error) {
+          console.error("Erro ao buscar detalhes do Pokémon", error);
+        }
+      }
+    </script>
+  </body>
+</html>
